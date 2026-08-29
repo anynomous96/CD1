@@ -54,6 +54,11 @@ body {
   min-height: 100vh;
 }
 
+::selection {
+  background: var(--accent-glow);
+  color: var(--ink);
+}
+
 button,
 textarea {
   font: inherit;
@@ -77,6 +82,7 @@ textarea:focus-visible,
   --muted: #69716c;
   --line: #d9d8cf;
   --accent: #e95835;
+  --accent-glow: rgba(226, 72, 29, 0.28);
   --accent-dark: #c93c20;
   --soft: #e5e4dc;
   min-height: 100vh;
@@ -94,6 +100,7 @@ textarea:focus-visible,
   --muted: #82a797;
   --line: #1f4438;
   --accent: #48ed9a;
+  --accent-glow: rgba(0, 255, 178, 0.35);
   --accent-dark: #20c97b;
   --soft: #132a23;
   background-image:
@@ -103,6 +110,10 @@ textarea:focus-visible,
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: var(--bg);
   height: 76px;
   padding: 0 clamp(20px, 5vw, 72px);
   display: flex;
@@ -674,6 +685,13 @@ footer {
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.15em;
+}
+
+footer>span:nth-child(1) {
+  margin-right: auto;
+}
+footer>span:nth-child(2) {
+  margin-left: auto;
 }
 
 .toast {
