@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
 
 type Mode = "morse" | "text";
 type Theme = "simple" | "cyber";
@@ -203,9 +204,46 @@ export default function App() {
   const playCharacter = (letter: string) => playUnits([[{ letter, morse: MORSE[letter] }]]);
   const savedForMode = saved.filter((item) => item.mode === mode);
 
+  const navRef = useRef<HTMLElement>(null);
+
+ useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (!navRef.current) return;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 75) {
+        // Scroll Down → Hide Navbar
+        gsap.to(navRef.current, {
+          yPercent: -100,
+          duration: 0.3,
+          ease: "ease-in-out",
+        });
+      } else {
+        // Scroll Up → Show Navbar
+        gsap.to(navRef.current, {
+          yPercent: 0,
+          duration: 0.3,
+          ease: "eaes-in-out",
+        });
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+
   return (
     <div className={`app theme-${theme}`}>
-      <header className="site-header">
+      <header ref={navRef} className="site-header">
         <a className="brand" href="#top" aria-label="Signal home"><span className="brand-mark"><i /><i /><i /></span><span>SIGNAL</span></a>
         <div className="header-actions">
           <span className="status"><i /> Ready</span>
