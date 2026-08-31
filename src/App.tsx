@@ -204,6 +204,13 @@ export default function App() {
   const playCharacter = (letter: string) => playUnits([[{ letter, morse: MORSE[letter] }]]);
   const savedForMode = saved.filter((item) => item.mode === mode);
 
+    /* ---------- theme ---------- */
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'cyber' ? '#08120F' : '#F3F1E9');
+  }, [theme]);
+
   const navRef = useRef<HTMLElement>(null);
 
  useEffect(() => {
