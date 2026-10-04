@@ -30,6 +30,7 @@ const Icons = {
   download: <><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" /></>,
   share: <><circle cx="18" cy="5" r="2.3" /><circle cx="6" cy="12" r="2.3" /><circle cx="18" cy="19" r="2.3" /><path d="m8 11 7.8-4.7M8 13l7.8 4.7" /></>,
   refresh: <><path d="M20 11a8 8 0 1 0 2 5.5" /><path d="M20 4v7h-7" /></>,
+  vibrate: <><path d="M8 5a5 5 0 0 0 0 14M5 2a9 9 0 0 0 0 20M16 5a5 5 0 0 1 0 14M19 2a9 9 0 0 1 0 20" /><rect x="10" y="8" width="4" height="8" rx="1" /></>,
   close: <path d="m6 6 12 12M18 6 6 18" />,
 };
 
@@ -119,6 +120,7 @@ export default function App() {
   const [saved, setSaved] = useState<SavedItem[]>(loadSaved);
   const [notice, setNotice] = useState("");
   const [playing, setPlaying] = useState(false);
+  const [transmissionType, setTransmissionType] = useState<"audio" | "haptic">("audio");
   const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -241,6 +243,7 @@ export default function App() {
   function stopAudio() {
     playbackId.current += 1;
     setPlaying(false);
+    navigator.vibrate?.(0);
     setActiveWord(-1);
     setActiveLetter(-1);
   }
@@ -355,10 +358,11 @@ export default function App() {
     await delay(duration);
   }
 
-  async function playUnits(words = transmissionWords) {
+  async function playUnits(words = transmissionWords, type: "audio" | "haptic" = "audio") {
     if (!words.length) return;
     stopAudio();
     const id = playbackId.current;
+    setTransmissionType(type);
     setPlaying(true);
     for (let wi = 0; wi < words.length && id === playbackId.current; wi++) {
       setActiveWord(wi);
@@ -366,7 +370,9 @@ export default function App() {
         setActiveLetter(li);
         const symbols = words[wi][li].morse;
         for (let si = 0; si < symbols.length && id === playbackId.current; si++) {
-          await tone(symbols[si] === "." ? 90 : 270, id);
+          const duration = symbols[si] === "." ? 90 : 270;
+          if (type === "haptic") { navigator.vibrate?.(duration); await delay(duration); }
+          else await tone(duration, id);
           if (si < symbols.length - 1) await delay(90);
         }
         if (li < words[wi].length - 1) await delay(270);
@@ -376,7 +382,7 @@ export default function App() {
     if (id === playbackId.current) stopAudio();
   }
 
-  const playCharacter = (letter: string) => playUnits([[{ letter, morse: MORSE[letter] }]]);
+  const playCharacter = (letter: string) => playUnits([[{ letter, morse: MORSE[letter] }]], "audio");
   const savedForMode = saved.filter((item) => item.mode === mode);
 
     /* ---------- theme ---------- */
@@ -426,7 +432,7 @@ export default function App() {
   return (
     <div className={`app theme-${theme}`}>
       <header ref={navRef} className="site-header">
-        <a className="brand" href="#top" aria-label="Signal home"><span className="brand-mark"><i /><i /><i /></span><span>SIGNAL</span></a>
+        <a className="brand" href="#top" aria-label="Signal home"><img className="brand-logo" src={`${import.meta.env.BASE_URL}signal-logo.svg`} alt="" /><span>SIGNAL</span></a>
         <div className="header-actions">
           <span className={`status ${isOnline ? "" : "offline"}`}><i /> {isOnline ? "Online" : "Offline"}</span>
           {!isStandalone && (deferredInstallPrompt || isIOS) && <button className="install-header-button" onClick={() => setShowInstallPrompt(true)}><Icon name="download" size={16} /> Install</button>}
@@ -487,7 +493,7 @@ export default function App() {
         </section>
 
         <section className="transmitter section-rule">
-          <div className="section-heading"><div><p className="eyebrow">Audio transmitter</p><h2>Hear every signal.</h2></div><button className="play-button" onClick={() => playing ? stopAudio() : playUnits()} disabled={!transmissionWords.length}><Icon name={playing ? "stop" : "play"} /> {playing ? "Stop" : "Transmit"}</button></div>
+          <div className="section-heading"><div><p className="eyebrow">Pocket transmitter</p><h2>Hear or feel every signal.</h2></div><div className="transmit-actions"><button className="play-button" onClick={() => playing && transmissionType === "audio" ? stopAudio() : playUnits(transmissionWords, "audio")} disabled={!transmissionWords.length}><Icon name={playing && transmissionType === "audio" ? "stop" : "play"} /> {playing && transmissionType === "audio" ? "Stop" : "Sound"}</button><button className="play-button haptic-button" onClick={() => playing && transmissionType === "haptic" ? stopAudio() : playUnits(transmissionWords, "haptic")} disabled={!transmissionWords.length || !("vibrate" in navigator)} title={("vibrate" in navigator) ? "Transmit Morse through phone vibration" : "Vibration is not supported by this device"}><Icon name="vibrate" /> {playing && transmissionType === "haptic" ? "Stop" : "Vibrate"}</button></div></div>
           <div className="signal-reader" aria-live="polite">
             {transmissionWords.length ? transmissionWords.map((word, wi) => (
               <span className={`signal-word ${activeWord === wi ? "active" : ""}`} key={`${wi}-${word.map((x) => x.letter).join("")}`}>
@@ -509,7 +515,7 @@ export default function App() {
 
       {showInstallPrompt && !isStandalone && (
         <aside className="install-prompt" role="dialog" aria-modal="false" aria-label="Install Signal">
-          <img src="/icons/icon-192.png" alt="" width="52" height="52" />
+          <img src={`${import.meta.env.BASE_URL}icons/icon-192.png`} alt="" width="52" height="52" />
           <div className="install-copy">
             <p>Install Signal</p>
             <span>Keep this Morse utility one tap away and available offline.</span>
