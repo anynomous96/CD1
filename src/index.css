@@ -122,6 +122,13 @@ textarea:focus-visible,
   border-bottom: 1px solid var(--line);
 }
 
+@media (display-mode: standalone) {
+  .site-header {
+    height: calc(76px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
 .brand {
   color: inherit;
   text-decoration: none;
@@ -182,6 +189,29 @@ textarea:focus-visible,
   align-items: center;
 }
 
+.install-header-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 13px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  transition: transform 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.install-header-button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
 .status {
   color: var(--muted);
   text-transform: uppercase;
@@ -199,6 +229,11 @@ textarea:focus-visible,
   background: var(--accent);
   border-radius: 50%;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent), transparent 82%);
+}
+
+.status.offline i {
+  background: #d64a37;
+  box-shadow: 0 0 0 4px rgba(214, 74, 55, 0.15);
 }
 
 .icon-button {
@@ -362,6 +397,14 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 14px;
+}
+
+.shortcut-hint {
+  margin-left: auto;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.02em;
 }
 
 .clear-button {
@@ -694,11 +737,138 @@ footer>span:nth-child(2) {
   margin-left: auto;
 }
 
-.toast {
+.install-prompt,
+.pwa-update {
   position: fixed;
-  z-index: 20;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface), var(--bg) 12%);
+  color: var(--ink);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
+  animation: prompt-in 0.32s ease both;
+}
+
+.install-prompt {
   right: 24px;
   bottom: 24px;
+  width: min(440px, calc(100% - 48px));
+  padding: 16px;
+}
+
+.install-prompt img {
+  flex: 0 0 auto;
+  border-radius: 14px;
+}
+
+.install-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.install-copy p,
+.install-copy span,
+.install-copy small {
+  margin: 0;
+}
+
+.install-copy p,
+.pwa-update b {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.install-copy span,
+.install-copy small,
+.pwa-update span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.install-copy small {
+  margin-top: 4px;
+}
+
+.install-copy small b {
+  color: var(--ink);
+}
+
+.install-actions {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 8px;
+}
+
+.install-now,
+.pwa-update > button:not(.dismiss-update) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  min-height: 38px;
+  padding: 0 13px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.theme-cyber .install-now,
+.theme-cyber .pwa-update > button:not(.dismiss-update) {
+  color: #06130d;
+}
+
+.dismiss-install,
+.dismiss-update {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.dismiss-install:hover,
+.dismiss-update:hover {
+  color: var(--accent);
+}
+
+.pwa-update {
+  left: 24px;
+  bottom: 24px;
+  max-width: min(440px, calc(100% - 48px));
+  padding: 14px 12px 14px 16px;
+}
+
+.pwa-update > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+@keyframes prompt-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.toast {
+  position: fixed;
+  z-index: 55;
+  right: 24px;
+  top: 92px;
   max-width: calc(100% - 48px);
   padding: 13px 18px;
   background: var(--ink);
@@ -766,6 +936,20 @@ footer>span:nth-child(2) {
   .saved-list {
     grid-template-columns: 1fr;
   }
+
+  .install-prompt,
+  .pwa-update {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    width: auto;
+    max-width: none;
+  }
+
+  .toast {
+    top: 78px;
+    right: 14px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -792,7 +976,11 @@ footer>span:nth-child(2) {
 
   .output-actions {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .shortcut-hint {
+    display: none;
   }
 
   .output-actions button {
