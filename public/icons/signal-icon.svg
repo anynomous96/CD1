@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Signal Morse Translator">
+  <defs>
+    <linearGradient id="bg" x1="70" y1="54" x2="448" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18342B"/>
+      <stop offset="1" stop-color="#071611"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="164" y1="126" x2="378" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#70F8B0"/>
+      <stop offset="1" stop-color="#2CCF79"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="32" y="32" width="448" height="448" rx="86" fill="none" stroke="#70F8B0" stroke-opacity=".14" stroke-width="2"/>
+  <path d="M134 189C151 150 186 125 226 119M378 189C361 150 326 125 286 119" fill="none" stroke="#70F8B0" stroke-opacity=".56" stroke-width="18" stroke-linecap="round"/>
+  <path d="M115 232C145 175 197 151 256 151C315 151 367 175 397 232" fill="none" stroke="#70F8B0" stroke-opacity=".21" stroke-width="15" stroke-linecap="round"/>
+  <rect x="142" y="266" width="50" height="106" rx="25" fill="url(#pulse)"/>
+  <rect x="231" y="204" width="50" height="168" rx="25" fill="url(#pulse)"/>
+  <rect x="320" y="238" width="50" height="134" rx="25" fill="url(#pulse)"/>
+  <circle cx="167" cy="319" r="9" fill="#F4F6E9"/>
+  <circle cx="256" cy="251" r="9" fill="#F4F6E9"/>
+  <circle cx="345" cy="291" r="9" fill="#F4F6E9"/>
+</svg>
