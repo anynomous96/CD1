@@ -11,15 +11,17 @@ const __dirname = path.dirname(__filename);
 // A PWA needs separately cacheable assets and a service worker, so this build
 // intentionally does not use a single-file output plugin.
 export default defineConfig({
+  // Relative asset URLs keep the installed app working on sub-path hosts (for example GitHub Pages).
+  base: "./",
   plugins: [
     react(),
     tailwindcss(),
     VitePWA({
       registerType: "prompt",
       injectRegister: false,
-      includeAssets: ["icons/signal-icon.svg", "icons/apple-touch-icon.png"],
+      includeAssets: ["signal-logo.svg", "icons/signal-icon.svg", "icons/apple-touch-icon.png"],
       manifest: {
-        id: "/",
+        id: ".",
         name: "Signal — Morse Code Translator",
         short_name: "Signal",
         description: "Translate Morse code, transmit audio signals, and keep messages available offline.",
@@ -28,8 +30,8 @@ export default defineConfig({
         display: "standalone",
         display_override: ["window-controls-overlay", "standalone"],
         orientation: "any",
-        start_url: "/",
-        scope: "/",
+        start_url: ".",
+        scope: ".",
         lang: "en",
         categories: ["utilities", "productivity", "education"],
         icons: [
@@ -42,19 +44,19 @@ export default defineConfig({
             name: "Text to Morse",
             short_name: "Encode",
             description: "Open the text to Morse translator",
-            url: "/?mode=text",
+            url: "./?mode=text",
             icons: [{ src: "icons/icon-192.png", sizes: "192x192", type: "image/png" }],
           },
           {
             name: "Morse reference",
             short_name: "Reference",
             description: "Open the Morse character sheet",
-            url: "/?mode=morse#reference",
+            url: "./?mode=morse#reference",
             icons: [{ src: "icons/icon-192.png", sizes: "192x192", type: "image/png" }],
           },
         ],
         share_target: {
-          action: "/",
+          action: "./",
           method: "GET",
           enctype: "application/x-www-form-urlencoded",
           params: { title: "title", text: "text", url: "url" },

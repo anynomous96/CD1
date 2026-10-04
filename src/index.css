@@ -1116,3 +1116,28 @@ html:has(.theme-cyber)::-webkit-scrollbar-thumb:hover {
 .theme-cyber .editor textarea {
   scrollbar-color: #48ed9a transparent;
 }  */
+
+/* Restored original Signal mark and mobile haptic transmitter. */
+.brand-logo {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.transmit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.haptic-button {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+}
+
+.haptic-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
